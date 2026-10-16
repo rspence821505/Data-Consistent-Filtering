@@ -1,0 +1,114 @@
+experiment:
+  name: n_kappa_bias_variance
+  description: >
+    Ensemble-size by retained-rank (N, kappa) bias-variance response surface for
+    QPCA-EnDCF.  Appendix D's bias bound carries a truncation term
+    ||(I - Pi_kappa) mu_E||^2 that can only shrink as kappa grows, while both the
+    bias and the variance bounds carry a projector-estimation term with the
+    stability factor kappa / delta_kappa^2 that grows with kappa and with the
+    closing of the cutoff gap; the remaining terms are O(1/N).  Every published
+    experiment pins kappa = 1 and N = 10, so none of that surface has been
+    measured.  This one measures it, in ordinary cycling and in a
+    theory-compatible independent-restart companion.
+
+# The model, observation and window-length blocks are identical to
+# experiments/diagnostics/bias_variance_analysis.yaml and
+# experiments/diagnostics/restart_vs_cycled.yaml.  They must stay identical: the
+# restart law this experiment draws from is the one section 7 calibrated, and
+# reusing it is only legitimate while the forecast problem is the same one.
+model:
+  type: lorenz96
+  n: 40
+  F: 8.0
+  dt: 0.01
+  spinup_steps: 0
+
+observations:
+  m: 20 # Observation dimension (observe every other state)
+  observe_every: 2 # Observe states 0, 2, 4, ..., 38
+  noise_std: 1.5 # sigma_obs
+  steps_per_obs: 10 # T_obs = 0.1
+
+assimilation:
+  window_length: 5 # L, so the stacked observation dimension is d = m L = 100
+  # n_windows is not read here: the horizon is derived from the n_kappa window
+  # design below (spinup_windows + window_stride * (n_windows - 1) + 1), so the
+  # truth trajectories are exactly as long as the experiment needs.
+  ensemble_size: 10 # only the default; the sweep below is what is actually run
+
+filters:
+  qpca_endcf:
+    # k is NOT read by this experiment -- kappa is swept, see n_kappa.kappa_values
+    # below -- but it is kept at the published value so the file still describes a
+    # runnable QPCA-EnDCF configuration and so the calibration-matching check
+    # against a section 7 run compares like with like.
+    k: 1
+    inflation: 1.0
+    # null = the paper's Lorenz-96 filter (no localization); regularizing the
+    # whitened observation mismatch instead of imposing a spatial structure is
+    # the point of the method.
+    localization_radius: null
+
+n_kappa:
+  # --- design grid ---------------------------------------------------------- #
+  # kappa <= min(N - 1, d) is a RANK constraint, not a tuning range: the centered
+  # whitened residual matrix E_c has rank at most N - 1, so (N=5, kappa=8) is not
+  # a design point that exists.  The driver drops those pairs and prints which.
+  ensemble_sizes: [5, 10, 20, 40]
+  kappa_values: [1, 2, 4, 8]
+
+  # --- regimes -------------------------------------------------------------- #
+  # cycled  -- ordinary cycling, what the filter actually does.
+  # restart -- the theory-compatible companion: every evaluated window starts
+  #            from a freshly drawn forecast ensemble and is discarded after one
+  #            analysis.
+  regimes: [cycled, restart]
+
+  # How the shared forecast-mean error b is drawn in the restart regime.
+  #
+  # per_window -- b_{r,w}, ONE draw shared by all M realizations at a window, so
+  #   every realization faces the same forecast distribution and the M ensembles
+  #   are i.i.d. draws from it.  That is exactly the setting of Appendix D's
+  #   bias-variance assumptions, where the expectation is over independent
+  #   ensemble draws with the truth and observations held fixed.  It is the
+  #   default here because the questions this experiment asks are about how the
+  #   across-realization variance responds to N and to kappa.
+  #
+  # per_realization -- section 7's primary design.  It keeps the forecast-mean
+  #   uncertainty a real forecast ensemble carries, at the cost of an
+  #   N-independent variance floor of order tr(P_mean)/n; on this configuration
+  #   that floor dominates, which is fatal for an N-response study and harmless
+  #   for the A_cycle ratio section 7 reports.
+  mean_error_mode: per_window
+
+  # --- inner and outer design ---------------------------------------------- #
+  # M and the seed count match section 7 exactly, and the evaluation seeds are
+  # the leading block of the same seed family, so a (N=10, kappa=1) cell sits on
+  # the same truth trajectories as section 7 and the published 100x100 run and
+  # can be cross-checked against them.
+  #
+  # The comparison across kappa is better paired than either of those: the
+  # ensemble streams are keyed by (truth seed, window) and
+  # (truth seed, window, N) and NOT by kappa, and QPCA-EnDCF draws no
+  # observation perturbations, so at a fixed N every kappa in the restart regime
+  # sees bit-identical forecast ensembles and every kappa in the cycled regime
+  # starts from a bit-identical window-0 ensemble.  Differences across kappa are
+  # therefore not diluted by independent sampling noise.
+  n_mc: 100 # M, inner ensemble/filter realizations
+  n_evaluation_seeds: 50 # r, held-out truth/observation sequences
+
+  # --- window selection ----------------------------------------------------- #
+  # Windows 0-4 are still converging in this configuration (see the
+  # spinup_windows note in bias_variance_analysis.yaml); 50 is a conservative
+  # margin and matches section 7.  Every 5th window is evaluated: consecutive
+  # windows of one chaotic trajectory carry near-redundant information, and the
+  # stride cuts the cycled cost without changing what is being estimated.  The
+  # stride is NOT an independence claim -- the bootstrap still resamples whole
+  # truth seeds -- and each checkpoint also stores a stride-2 error Gram so the
+  # sensitivity of the conclusions to a doubled stride can be checked without a
+  # second run.
+  n_windows: 100 # evaluated windows per truth trajectory
+  window_stride: 5
+  spinup_windows: 50
+
+  label: grid

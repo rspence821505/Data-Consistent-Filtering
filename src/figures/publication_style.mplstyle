@@ -1,0 +1,92 @@
+# publication_style.mplstyle
+# Publication-quality matplotlib style
+
+# Figure properties
+figure.figsize: 10, 6
+figure.dpi: 300
+figure.facecolor: white
+figure.edgecolor: white
+
+# Font properties
+font.family: serif
+font.size: 12
+font.weight: bold
+
+# Axes properties
+axes.linewidth: 1.2
+axes.titlesize: 14
+axes.titleweight: bold
+axes.titlepad: 15
+axes.labelsize: 12
+axes.labelweight: bold
+axes.labelpad: 10
+axes.spines.top: False
+axes.spines.right: False
+axes.spines.left: True
+axes.spines.bottom: True
+axes.facecolor: white
+axes.edgecolor: black
+axes.axisbelow: True
+axes.grid: True
+
+# Grid properties
+grid.alpha: 0.3
+grid.linestyle: -
+grid.linewidth: 0.5
+grid.color: gray
+
+# Legend properties
+legend.frameon: True
+legend.fancybox: False
+legend.shadow: False
+legend.fontsize: 10
+legend.title_fontsize: 10
+legend.borderpad: 0.5
+legend.labelspacing: 0.5
+legend.handlelength: 2
+legend.handleheight: 0.7
+legend.handletextpad: 0.8
+legend.borderaxespad: 0.5
+legend.columnspacing: 2
+legend.framealpha: 0.98
+legend.edgecolor: black
+
+# Line properties
+lines.linewidth: 2
+lines.markersize: 6
+lines.markeredgewidth: 1.5
+lines.antialiased: True
+
+# Patch properties (for bar plots, etc.)
+patch.linewidth: 1.2
+patch.edgecolor: black
+patch.force_edgecolor: True
+patch.antialiased: True
+
+# Tick properties
+xtick.major.size: 6
+xtick.minor.size: 3
+xtick.major.width: 1.2
+xtick.minor.width: 0.8
+xtick.labelsize: 10
+xtick.direction: out
+xtick.minor.visible: True
+
+ytick.major.size: 6
+ytick.minor.size: 3
+ytick.major.width: 1.2
+ytick.minor.width: 0.8
+ytick.labelsize: 10
+ytick.direction: out
+ytick.minor.visible: True
+
+# Saving properties
+savefig.dpi: 300
+savefig.bbox: tight
+savefig.pad_inches: 0.1
+savefig.facecolor: white
+savefig.edgecolor: none
+savefig.transparent: False
+
+# Error bar properties
+errorbar.capsize: 3

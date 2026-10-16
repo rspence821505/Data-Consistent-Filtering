@@ -218,3 +218,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- Data-Consistent-Filtering ------------------------------------------------
+# Outputs of the reproduction workflows (see README); never committed.  The
+# published numerical results live in results/published/ and ARE committed.
+figures/generated/
+results/regenerated/*
+!results/regenerated/README.md
+
+# OS and editor files
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,121 @@
+experiment:
+  name: bias_variance_analysis
+  description: Decompose ensemble filter performance into bias and variance components.
+  seeds: [42, 123, 456, 789, 1011]
+
+model:
+  type: lorenz96
+  n: 40
+  F: 8.0
+  dt: 0.01
+  spinup_steps: 0
+
+observations:
+  m: 20 # Observation dimension (observe every other state)
+  observe_every: 2 # Observe states 0, 2, 4, ..., 38
+  noise_std: 1.5 # σ_obs - observation noise standard deviation
+  steps_per_obs: 10 # Observations every 10 integration steps (T_obs = 0.1)
+
+assimilation:
+  window_length: 5
+  n_windows: 1000
+  total_observations: 5000
+  ensemble_size: 10
+
+bias_variance:
+  n_monte_carlo: 100 # Number of ensemble realizations for B-V decomposition
+  temporal_windows: [0, 240, 480, 720, 990] # Windows to analyze in detail
+  # Filter spin-up. Windows 0-4 are still converging (the QPCA/Seq variance
+  # ratio swings between -31% and +53% there before settling into 71-85%), so
+  # steady-state summaries exclude them.
+  spinup_windows: 5
+  "spatial_analysis": true # Compute spatially-resolved bias/variance
+  metrics:
+    - rmse
+    - misfit
+    - spread
+    - bias_squared
+
+filters:
+  seq_enkf:
+    stabilize: false
+    inflation: 1.05
+  enkf_4d:
+    stabilize: true
+    inflation: 1.02
+  # Unlocalized ensemble transform filters. build_localization_weights returns
+  # an array of ones for a null radius, so these are Algorithms 3 and 4 reduced
+  # to the global ETKF -- the same objects notebook 01 compares under these
+  # names, with the same settings (unlocalized, uninflated). They enter the
+  # bias-variance decomposition as the deterministic square-root counterparts
+  # of Seq-EnKF and 4D-EnKF: no observation perturbations, and a different
+  # analysis-anomaly operator.
+  #
+  # inflation is 1.0 here as it is for every other filter in this comparison.
+  # That is equal tuning effort across filters -- namely none -- and it is the
+  # honest setting for a decomposition that is about the filters' intrinsic
+  # bias-variance trade, not about how well each can be tuned. It is also the
+  # unfavourable setting for an uninflated, unlocalized ETKF at N=10 on n=40,
+  # where the ensemble spans 9 of 40 dimensions; the sweep recorded in
+  # experiments/baseline/lorenz96_baseline.yaml measures unlocalized Seq-ETKF at
+  # RMSE 4.51 with spread/RMSE 0.11. Divergence at this setting is a result to
+  # report, not a reason to tune one filter and not the others.
+  seq_etkf:
+    localization_radius: null
+    inflation: 1.0
+  etkf_4d:
+    localization_radius: null
+    inflation: 1.0
+
+  # Localized ensemble transform filters (paper Algorithms 3 and 4).
+  #
+  # localization_radius is the Gaspari-Cohn cutoff in grid units, i.e. the
+  # separation at which the taper reaches zero (2c in the Gaspari-Cohn
+  # parameterization). null disables localization, giving the global ETKF.
+  #
+  # The paper prescribes localization and inflation for these filters only in
+  # the inlet shallow-water study (5 km Gaspari-Cohn, inflation 1.05); it gives
+  # no Lorenz-96 values, because the LETKF variants do not appear in the
+  # Lorenz-96 experiments. The radius below is therefore a choice for this
+  # configuration, not a value taken from the paper: 8 grid units on n=40 spans
+  # roughly a fifth of the ring and covers ~4 of the 20 observed sites on each
+  # side of a state index.
+  #
+  # inflation is set to 1.0 so every filter in the bias-variance comparison is
+  # uninflated. Note that none of the driver kernels read the inflation values
+  # above for seq_enkf/enkf_4d either, so the comparison is uninflated
+  # throughout; see the notebook for the consequences.
+  seq_letkf:
+    localization_radius: 8.0
+    inflation: 1.0
+  letkf_4d:
+    localization_radius: 8.0
+    inflation: 1.0
+  qpca_endcf:
+    k: 1
+    stabilize: true
+    inflation: 1.0
+    # QPCA-EnDCF as specified for the Lorenz-96 experiments uses NO
+    # localization -- regularizing the whitened observation mismatch instead of
+    # imposing a spatial structure is the point of the method, so setting this
+    # is a deliberate departure from the paper's Lorenz-96 configuration. It is
+    # enabled here so QPCA-EnDCF is compared against the LETKF variants on
+    # equal footing; the taper follows the inlet study, which applies
+    # Gaspari-Cohn to the state-observation cross-covariance for all five
+    # methods. Set to null to recover the paper's unlocalized filter.
+    #
+    # Tapering the cross-covariance also forces a change of gain: the tapered
+    # P_xy no longer lies in the ensemble row space, so the 1e-6 ridge on S
+    # would amplify the out-of-span part by 1e6. The localized path uses the
+    # rank-truncated pseudo-inverse of P_yy instead, which agrees with the
+    # ridged gain to ~1e-7 when the taper is off.
+    #
+    # null = the paper's Lorenz-96 filter. Setting a radius localized it and
+    # moved error from variance into bias (variance 2.46 -> 1.34, bias^2
+    # 11.76 -> 12.85) for essentially unchanged MSE (14.25 -> 14.21).
+    localization_radius: null
+
+output:
+  save_realizations: false
+  save_statistics: true
+  save_directory: "../results/diagnostics/bias_variance_analysis"

@@ -1,0 +1,232 @@
+experiment:
+  name: "lorenz96_baseline"
+  description: "Core comparison: Seq-EnKF vs 4D-EnKF vs QPCA-EnDCF"
+  seeds: [42, 123, 456, 789, 1011] # Multiple seeds for reproducibility and statistical testing
+
+model:
+  type: "lorenz96"
+  n: 40 # State dimension
+  F: 8.0 # Forcing parameter (chaotic regime)
+  dt: 0.01 # Integration time step
+  spinup_steps: 0 # Spin-up to attractor before generating truth
+
+observations:
+  m: 20 # Observation dimension (observe every other state)
+  observe_every: 2 # Observe states 0, 2, 4, ..., 38
+  # Editing this invalidates results/baseline/ and results/baseline_extended/
+  # without either of them noticing: a shard records the filters it was written
+  # with but not the configuration, and only the sensitivity sweep below keys its
+  # cache by sigma. Delete those two directories after changing it.
+  noise_std: 1.5 # σ_obs - observation noise standard deviation
+  steps_per_obs: 10 # Observations every 10 integration steps (T_obs = 0.1)
+
+  # Observation-noise sensitivity sweep (notebook 01 section 8 only; every other
+  # section, and notebooks 00 and 10, use noise_std above and ignore this).
+  #
+  # 1.5 appears in both lists on purpose, and it is recomputed under
+  # results/sensitivity/ rather than borrowed from results/baseline_extended/.
+  # Not because borrowing would bias it -- it would not. At 1.5 `config_at_noise`
+  # returns a config equal to the main one, `resolve_seeds` is prefix-stable and
+  # the RNG streams are keyed by filter name, so the first 20 shards of the
+  # 100-seed cache are bit-identical to this column (checked, not assumed).
+  # What is not worth keeping is the special case: that equality holds only while
+  # the extended cache's seed list, filter set and sigma all still match the
+  # sweep's, and it would have to be re-established whenever any of the three
+  # moved -- the filter set alone moved three times while this notebook was being
+  # written. Two minutes of recompute buys one rule instead.
+  #
+  # The low end matters more than the high end: at 1.5 seven of the nine filters
+  # already sit above the climatological RMSE, so 0.5 is where the ranking can
+  # still change.
+  noise_std_sweep: [0.5, 1.0, 1.5, 2.0, 3.0]
+
+assimilation:
+  window_length: 5 # L - observations per assimilation window
+  n_windows: 1000 # W - number of assimilation windows
+  total_observations: 5000 # K = W * L = 5000 total observation times
+  ensemble_size: 10 # N - number of ensemble members
+
+initial_ensemble:
+  method: "perturbed_truth" # Construct ensemble by perturbing truth
+  common_perturbation_weight: 0.5 # Weight for ξ_0 (shared component)
+  individual_perturbation_weight: 0.5 # Weight for ξ_j (individual component)
+
+filters:
+  # `stabilize` and `stabilization_eps` used to appear here and under enkf_4d.
+  # Nothing read them: StochasticEnKF stored the flag and never consulted it,
+  # StochasticEnKF4D has no such argument, and no code path has ever read
+  # stabilization_eps. They are gone rather than left advertising a control that
+  # does not exist -- the stochastic filters' innovation covariance is
+  # P_yy + R, which needs no floor. `stabilize` survives under qpca_endcf below,
+  # where it does select a code path.
+  - name: "seq_enkf"
+    description: "Sequential stochastic EnKF with perturbed observations"
+    params:
+      inflation: 1.0 # Multiplicative covariance inflation factor
+
+  - name: "enkf_4d"
+    description: "4D stochastic EnKF with joint updates over window"
+    params:
+      inflation: 1.0
+
+  - name: "qpca_endcf"
+    description: "QPCA Ensemble Data Consistency Filter with whitened residual filtering"
+    params:
+      k: 1 # κ - number of PCA modes to retain
+      stabilize: true # floor P_yy's spectrum before inverting (see stabilize_spd_like)
+
+  # ------------------------------------------------------------------------
+  # Extended comparison set (notebook 01 only; notebook 00 ignores these).
+  #
+  # These resolve the three-way comparison into one mechanism per arrow:
+  #   Seq-EnKF    -> Seq-ETKF      replacing the stochastic gain update with the
+  #                                deterministic square-root transform, at the
+  #                                sequential cadence
+  #   Seq-ETKF    -> Seq-LETKF     adding localization at the sequential cadence
+  #   Seq-ETKF    -> 4D-ETKF       the update cadence on its own
+  #   Seq-LETKF   -> 4D-LETKF      the update cadence again, between two filters
+  #                                that are actually tracking
+  #   4D-EnKF     -> 4D-EnKF-det   removing the observation perturbations
+  #   4D-EnKF-det -> 4D-ETKF       replacing the gain update with the
+  #                                deterministic square-root transform
+  #   4D-ETKF     -> 4D-LETKF      adding localization
+  #   4D-ETKF     -> QPCA-EnDCF    adding residual-space truncation
+  #   QPCA-EnDCF  -> QPCA-EnDCF-L  adding localization on top of truncation
+  #
+  # enkf_4d_det is the single-variable control for the perturbations. It exists
+  # because 4D-ETKF is NOT "4D-EnKF minus the perturbations": the transform also
+  # replaces the analysis-anomaly operator. Measured over 20 seeds, deleting the
+  # perturbations alone takes calibration 0.094 -> 0.052 and the square-root
+  # transform then takes it 0.052 -> 0.107. The two changes are each about a
+  # factor of two and pull in opposite directions, so bundling them into one
+  # arrow would make their near-cancellation look like evidence that the
+  # perturbations do not matter.
+  #
+  # localization_radius is the Gaspari-Cohn cutoff in grid units (the
+  # separation at which the taper reaches zero); null means unlocalized.
+  # 1.5 was chosen by sweeping radius in {1, 1.5, 2, 2.5, 3, 4, 6, 8, 12, 20}
+  # over 3 seeds x 160 settled windows: RMSE bottoms out at radius 2.0 (1.976)
+  # and calibration peaks at radius 1.0 (0.997), so 1.5 sits at the knee --
+  # RMSE 2.055, within 4% of the best, with calibration 0.937. Tuning on RMSE
+  # alone would have handicapped the benchmark on the very axis this notebook
+  # measures, so the knee is the honest pick and the sweep is reported.
+  #
+  # inflation stays at 1.0 for every filter here, matching the three above.
+  # Note that run_filter's 4D branch inflates only X_path[-1] while the 4D
+  # filters build their observation anomalies from all L window times, so a
+  # non-unit inflation would not be a consistent inflation of the 4D prior.
+  # That is dormant at 1.0.
+  # seq_etkf is the only added filter that is not four-dimensional. Seq-EnKF ->
+  # Seq-ETKF is the sequential counterpart of the two-step 4D chain below and
+  # bundles both of its changes (no perturbations, and a different
+  # analysis-anomaly operator) into one arrow -- there is no seq_enkf_det
+  # control. Its value is the other arrow: Seq-ETKF -> 4D-ETKF changes the
+  # update cadence and nothing else.
+  - name: "seq_etkf"
+    description: "Sequential deterministic ensemble transform KF, unlocalized (one update per observation time)"
+    params:
+      localization_radius: null
+      inflation: 1.0
+
+  # seq_letkf inherits 4D-LETKF's radius rather than being tuned at its own
+  # cadence, so that "Seq-LETKF -> 4D-LETKF" varies the cadence and nothing
+  # else. That inheritance is not free, and the sweep says so: repeating the
+  # radius sweep at the sequential cadence (3 seeds x 160 settled windows,
+  # inflation 1.0) gives
+  #   radius        1.0   1.5   2.0   2.5   3.0   4.0   6.0   8.0  12.0  none
+  #   RMSE         1.54  1.31  1.09  1.06  1.01  0.98  0.92  1.36  1.97  4.51
+  #   spread/RMSE  0.98  0.98  0.95  0.90  0.87  0.83  0.77  0.50  0.32  0.11
+  # so RMSE bottoms out near radius 6 (0.92) and 1.5 costs about 40% of it,
+  # while holding calibration at 0.98. The comparison is therefore conservative
+  # about Seq-LETKF, never flattering: it is reported at a radius chosen for a
+  # different cadence.
+  - name: "seq_letkf"
+    description: "Sequential localized ensemble transform KF (paper Algorithm 3)"
+    params:
+      localization_radius: 1.5
+      inflation: 1.0
+
+  - name: "enkf_4d_det"
+    description: "4D EnKF with the observation perturbations deleted (single-variable control)"
+    params:
+      inflation: 1.0
+
+  - name: "etkf_4d"
+    description: "4D deterministic ensemble transform KF, unlocalized (no perturbed observations)"
+    params:
+      localization_radius: null
+      inflation: 1.0
+
+  - name: "letkf_4d"
+    description: "4D localized ensemble transform KF (paper Algorithm 4)"
+    params:
+      localization_radius: 1.5
+      inflation: 1.0
+
+  - name: "qpca_endcf_loc"
+    description: "QPCA-EnDCF with a Gaspari-Cohn taper on the state-observation cross-covariance"
+    params:
+      k: 1
+      stabilize: true
+      localization_radius: 1.5
+      inflation: 1.0
+
+metrics:
+  # State estimation accuracy
+  state:
+    - rmse # Root mean square error (primary metric)
+    - pattern_correlation # Spatial correlation with truth
+    - normalized_rmse # RMSE relative to climatological variance
+
+  # Data consistency
+  data:
+    - relative_misfit # ||R^(-1/2)(z - Hx)||_2 / ||R^(-1/2)z||_2
+    - innovation_consistency # χ² statistic for whitened innovations
+    - observation_space_rmse # Direct measure of fit to observations
+
+  # Ensemble statistics
+  ensemble:
+    - spread # √(tr(P_ensemble)/n)
+    - spread_skill_ratio # Ensemble spread / RMSE (target ≈ 1)
+    - rank_histogram # For calibration diagnostics
+    - effective_size # N_eff = (Σw_i)² / Σw_i²
+
+  # Filter stability
+  stability:
+    - condition_number # κ(S) where S is innovation covariance
+    - effective_rank # Number of eigenvalues > ε·λ_max
+    - covariance_determinant # Measure of information content
+
+  # Computational
+  computational:
+    - runtime_per_window # Wall-clock time per assimilation window
+    - memory_usage # Peak RAM consumption
+
+# Output configuration
+output:
+  save_trajectories: true # Save full state trajectories for visualization
+  save_metrics: true # Save computed metrics
+  save_ensembles: true # Save ensemble snapshots at each window
+  save_observations: true # Save synthetic observations for reproducibility
+  save_truth: true # Save truth trajectory
+  save_frequency: 1 # Save every N windows (1 = save all)
+  results_dir: "../results/baseline"
+
+# Plotting configuration (for notebook use)
+plotting:
+  trajectory_plot:
+    state_indices: [0, 10, 20, 30] # Which states to plot in trajectory view
+    plot_ensemble_members: false # Plot individual members or just mean
+
+  metric_plot:
+    metrics_to_plot: ["rmse", "relative_misfit", "spread"]
+    confidence_interval: 0.95 # For multi-seed aggregation
+
+# Analysis configuration
+analysis:
+  statistical_tests:
+    - paired_t_test # Compare QPCA vs Seq-EnKF, QPCA vs 4D-EnKF
+    - bootstrap_ci # 95% CI on mean RMSE difference
+  n_bootstrap: 1000
+
+  significance_level: 0.05 # α for hypothesis test

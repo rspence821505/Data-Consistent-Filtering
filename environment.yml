@@ -1,0 +1,44 @@
+# Conda environment for "A Data-Consistent Approach to Ensemble Filtering".
+#
+#   conda env create -f environment.yml
+#   conda activate data-consistent-filtering
+#
+# Covers Level 1 (all eight figures from saved results) and Level 2 (rerunning
+# the Lorenz-96 experiments behind Figures 1-5).  The shallow-water experiment
+# (Figures 6-8) is reproduced from its saved run outputs, which needs nothing
+# beyond this environment.
+#
+# Versions are pinned to those the published results and figures were produced
+# with.  matplotlib and freetype are pinned so the regenerated PNGs are
+# pixel-identical to the paper's.  OpenBLAS is pinned to the exact release used
+# for the Lorenz-96 experiments: they are chaotic, so a last-bit difference in
+# one LAPACK call (QPCA-EnDCF's eigen-decomposition) grows over the 1000 cycled
+# windows until a trajectory is a different sample of the same experiment.
+# With this pin the experiments reproduce bit-for-bit on Apple Silicon (osx-arm64,
+# where they were run); other CPU architectures use different BLAS kernels and
+# reproduce them statistically (see README, "Numerical verification").
+name: data-consistent-filtering
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.12
+  # numerics
+  - numpy=2.5.1
+  - scipy=1.18.0
+  - libblas=3.11.0=*openblas
+  - libopenblas=0.3.33
+  # experiment drivers
+  - pyyaml=6.0.3
+  - joblib=1.5.3
+  - threadpoolctl=3.6.0
+  # figures
+  - matplotlib-base=3.11.0
+  - freetype=2.14.3
+  - pillow=12.3.0
+  - h5py=3.16.0
+  # notebook and tests
+  - jupyterlab=4.6.1
+  - ipykernel=7.3.0
+  - nbconvert=7.17.1
+  - pytest=9.1.1

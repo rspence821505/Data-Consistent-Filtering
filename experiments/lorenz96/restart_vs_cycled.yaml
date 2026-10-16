@@ -1,0 +1,137 @@
+experiment:
+  name: restart_vs_cycled
+  description: >
+    Independent-restart versus cycled-ensemble bias-variance comparison.  The
+    theory assumes the window-initial forecast ensemble is an i.i.d. sample from
+    a forecast distribution; ordinary cycling violates that because the analysis
+    ensemble of one window is the forecast ensemble of the next.  This
+    experiment runs a matched pair of regimes so the assumption can be probed.
+
+# The model, observation and window-length blocks are identical to
+# experiments/diagnostics/bias_variance_analysis.yaml.  They must stay identical:
+# the whole point of the comparison is that the restart and cycled regimes -- and
+# the published 100x100 cycled run -- differ in the ensemble handling and in
+# nothing else.
+model:
+  type: lorenz96
+  n: 40
+  F: 8.0
+  dt: 0.01
+  spinup_steps: 0
+
+observations:
+  m: 20 # Observation dimension (observe every other state)
+  observe_every: 2 # Observe states 0, 2, 4, ..., 38
+  noise_std: 1.5 # sigma_obs
+  steps_per_obs: 10 # T_obs = 0.1
+
+assimilation:
+  window_length: 5 # L
+  # n_windows is not read here: the horizon is derived from the restart_vs_cycled
+  # window design below (spinup_windows + window_stride * (n_windows - 1) + 1),
+  # so the truth trajectories are exactly as long as the experiment needs.
+  ensemble_size: 10 # only the default; the sweep below is what is actually run
+
+filters:
+  # Inflation is 1.0 for every filter, at every ensemble size.  That is equal
+  # tuning effort across filters -- namely none -- and it matches the published
+  # hierarchical run, whose kernels also apply no inflation.  Where a filter is
+  # unstable at a small ensemble size the driver records and reports the
+  # divergence rather than quietly stabilizing one filter and not another.
+  seq_enkf:
+    inflation: 1.0
+  enkf_4d:
+    inflation: 1.0
+  qpca_endcf:
+    # kappa = 1 for the primary rate experiment, so the retained rank does not
+    # change with N.  The driver enforces 1 <= kappa <= min(N - 1, m * L).
+    k: 1
+    inflation: 1.0
+    # null = the paper's Lorenz-96 filter (no localization); regularizing the
+    # whitened observation mismatch instead of imposing a spatial structure is
+    # the point of the method.
+    localization_radius: null
+
+restart_vs_cycled:
+  # --- filters -------------------------------------------------------------- #
+  # Pinned explicitly rather than inherited from bias_variance_mc.FILTER_NAMES.
+  # That default now carries five filters (the ETKF variants were added to the
+  # cycled decomposition in sections 1-6), and inheriting it would silently
+  # redefine this experiment and change its configuration hash, invalidating
+  # every checkpoint under results/diagnostics/restart_vs_cycled/. Section 7 is
+  # a three-filter comparison; adding filters to it is a deliberate act that
+  # should require editing this line and paying for the recomputation.
+  filter_names: [Seq-EnKF, 4D-EnKF, QPCA-EnDCF]
+
+  # --- ensemble-size sweep ------------------------------------------------- #
+  ensemble_sizes: [5, 10, 20, 40]
+
+  # --- inner and outer design ---------------------------------------------- #
+  n_mc: 100 # M, inner ensemble/filter realizations
+  n_evaluation_seeds: 50 # r, held-out truth/observation sequences
+  n_calibration_seeds: 10 # disjoint truth seeds for the restart covariances
+
+  # --- window selection ----------------------------------------------------- #
+  # Windows 0-4 are still converging in this configuration (see the
+  # spinup_windows note in bias_variance_analysis.yaml); 50 is a conservative
+  # margin.  Every 5th window is evaluated: consecutive windows of one chaotic
+  # trajectory carry near-redundant information, and the stride cuts the cycled
+  # cost without changing what is being estimated.  The stride is NOT an
+  # independence claim -- the bootstrap still resamples whole truth seeds -- and
+  # each checkpoint also stores a stride-2 error Gram so the sensitivity of the
+  # conclusions to a doubled stride can be checked without a second run.
+  n_windows: 150 # evaluated windows per truth trajectory
+  window_stride: 5
+  spinup_windows: 50
+
+  # --- restart-distribution calibration ------------------------------------- #
+  # One COMMON restart law, pooled with equal weight across the three filters,
+  # so every filter begins its restart windows from statistically identical
+  # forecast ensembles and no filter's own forecast statistics are privileged.
+  # 'filter_marginal' (each filter matched to its own forecast distribution) is
+  # implemented as a sensitivity analysis and answers a different question.
+  # 'isotropic' is a trace-matched control and is only ever a labelled
+  # sensitivity experiment, never a headline result.
+  restart_mode: common
+
+  # How the shared forecast-mean error b is drawn.
+  #
+  # per_realization -- b_{r,t,w}, redrawn for every inner realization. This is
+  #   the primary design: it keeps the forecast-mean uncertainty a real forecast
+  #   ensemble carries instead of centring every restart on the truth, which
+  #   would hand the filter an oracle forecast mean.
+  #
+  #   It has a consequence that must be stated wherever a scaling exponent is
+  #   read off it. b is realization-dependent and does not depend on N, so the
+  #   analysis-mean variance across realizations carries an N-independent floor
+  #   of order tr(P_mean)/n propagated through the analysis. On this Lorenz-96
+  #   configuration tr(P_mean)/n is ~21 against tr(P_within)/n ~3 -- these
+  #   uninflated, unlocalized filters are strongly under-dispersive -- so that
+  #   floor dominates. A fitted exponent on the TOTAL variance is therefore
+  #   bounded away from 1 by construction, and a small exponent here is not
+  #   evidence against the theory.
+  #
+  # per_window -- b_{r,w}, one draw shared by all M realizations at a window, so
+  #   every realization faces the same forecast distribution. That is the
+  #   situation the theory assumes, and it is the configuration in which "does
+  #   the analysis-mean variance scale as N^-1?" is a well-posed question. Run
+  #   as a labelled companion (--regime restart --mean-error-mode per_window),
+  #   not as a replacement for the primary design.
+  mean_error_mode: per_realization
+
+  # The law is calibrated at ONE ensemble size and held fixed across the sweep.
+  # If it moved with N, the N-dependence of the analysis-mean variance would mix
+  # the sampling effect the theory predicts with a moving target distribution.
+  calibration_ensemble_size: 10
+  calibration_n_mc: 20
+  calibration_n_windows: 300
+  calibration_spinup_windows: 50
+
+  # Covariance stabilization: eigenvalues are clipped at zero and then floored at
+  # this fraction of the largest eigenvalue; shrinkage is linear toward
+  # (tr P / n) I.  Both are recorded in the calibration checkpoint alongside the
+  # raw spectrum, so what the stabilization changed stays auditable.
+  eigenvalue_floor: 1.0e-6
+  shrinkage: 0.0
+
+  label: full

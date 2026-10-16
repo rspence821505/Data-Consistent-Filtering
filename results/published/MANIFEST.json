@@ -1,0 +1,290 @@
+{
+  "description": "Processed numerical results behind the figures of 'A Data-Consistent Approach to Ensemble Filtering'. Checked by scripts/verify_results.py and tests/test_reproduction.py.",
+  "files": {
+    "lorenz96/calibration_N10.npz": {
+      "bytes": 7444986,
+      "provenance": "Figures 1-2. Reduced by src/processing/lorenz96.py (extract_calibration) from the 100 per-seed shards written by src/experiments/baseline.py with EXTENDED_FILTER_ORDER (original cache: results/baseline_extended/seeds).",
+      "sha256": "95da4eb04bd1ea48f97ebb2feee63c9bfa2d5a45d8d8aded3f36edde4b734c16"
+    },
+    "lorenz96/coverage_ranks_N10.npz": {
+      "bytes": 2870076,
+      "provenance": "Figure 2. Reduced (extract_coverage) from the 100 per-seed shards of src/experiments/coverage.py (original cache: results/diagnostics/coverage_v1).",
+      "sha256": "08c033d7109fa75d52e3113bfbf2dbf3549c73ca1ce0ddb6ec42d5525e76b155"
+    },
+    "lorenz96/ensemble_size_sweep.npz": {
+      "bytes": 24583,
+      "provenance": "Figure 3. Reduced (extract_ensemble_sweep) from the per-size shards of src/experiments/baseline.py at N in {5,10,15,20,25,30} (original cache: results/sensitivity/ensemble_size/N_*).",
+      "sha256": "52dd45cb4c3746b34a5359eeaa7128618a81577cb1205740e0e1e23332759af4"
+    },
+    "lorenz96/hierarchical_bias_variance.npz": {
+      "bytes": 11107096,
+      "provenance": "Figure 4. Reduced (extract_hierarchical) from the 585 (truth seed, filter) checkpoints of src/experiments/bias_variance_mc.py --hierarchical (original cache: results/diagnostics/bias_variance_analysis_100x100, 1.2 GB).",
+      "sha256": "010a007b7adfab0d9217c01ed20c0d325b840411092c6e58ba27b58f2a736044"
+    },
+    "lorenz96/n_kappa_bootstrap.npz": {
+      "bytes": 1092038,
+      "provenance": "Figure 5. Reduced (extract_n_kappa) from the 1500 cells of src/experiments/n_kappa_bias_variance.py run grid_aae8ed2c (708 MB); bootstrap exactly as in the original analysis notebook.",
+      "sha256": "3c99972bd6fa314ca6055363dc547dd425f51444ea08c0dcb9f6a4b5e13326f2"
+    },
+    "lorenz96/restart_law_2fbc05cb06f87eaa.npz": {
+      "bytes": 219184,
+      "provenance": "Level 2 input (optional). The restart forecast law used by the (N, kappa) run, calibrated by src/experiments/restart_vs_cycled.py (run full_907c3cfc). Recalibrating from scratch reproduces the same identifier.",
+      "sha256": "aeeeabb6cdbc787512cfbe5861c66899445855da4419e578c07c1c4b29c88f31"
+    },
+    "shallow_water/all_filter_per_window_v3.json": {
+      "bytes": 12795,
+      "provenance": "Figures 6-8, Table 2. Built from shallow_water/runs/ by the scripts ported to src/processing/shallow_water.py (the original files, generated under Python 3.11; rebuilding under Python >= 3.12 changes some means in the last bit).",
+      "sha256": "03965bffbb4ed16138e3492dd0464377aa421671668d8ece1c8ce65f5f13dc8d"
+    },
+    "shallow_water/all_filter_shelf_gamma_E_v3.csv": {
+      "bytes": 84848,
+      "provenance": "Figures 6-8, Table 2. Built from shallow_water/runs/ by the scripts ported to src/processing/shallow_water.py (the original files, generated under Python 3.11; rebuilding under Python >= 3.12 changes some means in the last bit).",
+      "sha256": "602bde2f5839576791f28fb5cc9b033e201afdeb605dfd1e2abf188d55285b2d"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_enkf4d_seed2027/result_qpca_endcf.json": {
+      "bytes": 22331,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "2f1342bef1b5f10f915483aa495b9edd7100dbcee4b353d63827dedbe52f0578"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_enkf4d_seed2028/result_qpca_endcf.json": {
+      "bytes": 22396,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "aa7b3bc91eea768468bbe8438e5595e88efb802686f28acbb4eb0376ed5e06ed"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_letkf_seed2027/result_qpca_endcf.json": {
+      "bytes": 22172,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "fcb663a050c2482e1e290f9c6acbe505c1210e331c91e8096eaa237084517fe7"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_letkf_seed2028/result_qpca_endcf.json": {
+      "bytes": 22036,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "28c39a42c01c0a16218e0463725e355f8498c234a09cd30dd96f44fa6bcc6c94"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_letkf_seed2029/result_qpca_endcf.json": {
+      "bytes": 22099,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "454f7309220d2fed24f1fb15c3476c80e4a2cf952156a53f6228ada0bcb8432d"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_qpca_seed2027/result_qpca_endcf.json": {
+      "bytes": 26987,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "153df43d984a5ef077a328da2eebdac25726addb711a6e4d9d01b9c936276933"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_qpca_seed2028/result_qpca_endcf.json": {
+      "bytes": 27005,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "befae388405ec2dacf1f3846d55e6eefa1043fb98d1a0cdf0eb89b494510d0d7"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_qpca_seed2029/result_qpca_endcf.json": {
+      "bytes": 27026,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "4c9735bcf50d2296a1d0ffede2d6289236e8b5fade46c7ab5fe6b6ee6f7ebcdf"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_seq_letkf_seed2027/result_qpca_endcf.json": {
+      "bytes": 20930,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "c2f2b449a05b632679473c9c1c3380d57344941063c425e3b0833e23dfbdfd37"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_seq_letkf_seed2028/result_qpca_endcf.json": {
+      "bytes": 20606,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "ab11c20937598012671a9166fab7efc8b7192a170e3c748195b2d514768cdf6a"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60_L10km_gh_seq_letkf_seed2029/result_qpca_endcf.json": {
+      "bytes": 22098,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "0de505fe5142b5d8988968c7ec72ba0c601d29c85753204bb10afc3bf1d686a9"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_enkf4d_seed2027/result_qpca_endcf.json": {
+      "bytes": 12488,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "dc7844d47339fee2a2fa5db8f1c0556bb2dbed007d954afff4b39fab33184c64"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_enkf4d_seed2028/result_qpca_endcf.json": {
+      "bytes": 12453,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "f32302e0eeed9d2266db890316d79d69af87fa8acf48ca9f8f09028b729d66e6"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_enkf4d_seed2029/result_qpca_endcf.json": {
+      "bytes": 12493,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "6bc441ec6914355d19fbb951eeb3f8e5d5266c406e69a767044e3b6b2f8a5683"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_letkf_seed2027/result_qpca_endcf.json": {
+      "bytes": 12356,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "4c44bafb3f7f24749a5af72b22ce3d6bef3d772629d3fa157c0eb354b69b1bd5"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_letkf_seed2028/result_qpca_endcf.json": {
+      "bytes": 12344,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "5ba2516db51669758cbe286bfe78f09a8ab0d8df84f127d0c2a88101d5f6e4be"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_letkf_seed2029/result_qpca_endcf.json": {
+      "bytes": 12324,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "83250be329a5a2b1450486fc9b1ddbf35aa1d049e4dd214b9439b8de061e7c44"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_qpca_seed2027/result_qpca_endcf.json": {
+      "bytes": 14995,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "fafe4b5b383ef8d36b494afb9651906902cd34e39409e477505a40c9dac732cf"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_qpca_seed2028/result_qpca_endcf.json": {
+      "bytes": 14973,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "a94eb26da707086d2b4caa2c8cd5dc0516927bfddfd10f88a2ba0c31eb3fc08c"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_qpca_seed2029/result_qpca_endcf.json": {
+      "bytes": 14927,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "f7e119fa9b67180949d69c2b481c2d27aba9e85b9fc71d8daa23d09ae4538068"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_seq_letkf_seed2027/result_qpca_endcf.json": {
+      "bytes": 11721,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "106d4d60f36d398431271adc0649b81bb3dfb128be498997931bf9851c09bf6a"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_seq_letkf_seed2028/result_qpca_endcf.json": {
+      "bytes": 12368,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "b1763d1b8b7b6447c450639469ee8b8c2b00346000067a94a0c65d4ce971b4a7"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_L10km_gh_seq_letkf_seed2029/result_qpca_endcf.json": {
+      "bytes": 11820,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "df6f15b15b13628c9a91dd60aa1eb7e8abfacec36236e0d661183724b9e8bdad"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_enkf4d_seed2027/result_qpca_endcf.json": {
+      "bytes": 12427,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "c424eb94b0f7944a1141a017bd9c3764039ce22ee7dcb7b01b2e833c2871cb3e"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_enkf4d_seed2028/result_qpca_endcf.json": {
+      "bytes": 12409,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "a24aa26ac061aacb520f28a742f3b19df96ae071a384e685e7f06d64aad24c3f"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_enkf4d_seed2029/result_qpca_endcf.json": {
+      "bytes": 12386,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "74f854052a8771d0a293a124c61977d33a842e13a8b0ccd27fd3a6c19c739bc9"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_letkf_seed2027/result_qpca_endcf.json": {
+      "bytes": 12328,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "b3d9ed8fb93197a294cb587f3c7195bf2b635219d5f999c18b788cbbc0a66c90"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_letkf_seed2028/result_qpca_endcf.json": {
+      "bytes": 12359,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "6cfb723fef167ff861f481ad0598a7f5ecd87fdecf5507e2040d5cbec4c10bb2"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_letkf_seed2029/result_qpca_endcf.json": {
+      "bytes": 12379,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "02022f6966b7f9a0afe9efe4adbcf10c029461fd9b379801e069091a4f5d665b"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_qpca_seed2027/result_qpca_endcf.json": {
+      "bytes": 14956,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "6a3977601b5cc52bc4e601109f908c602fd0d0a6e78a1356d7d70d534e2136b3"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_qpca_seed2028/result_qpca_endcf.json": {
+      "bytes": 14951,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "1857a62c658c0ddbb243ade2e4dcaa9b874ffb706a2038552790804a573eed51"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_qpca_seed2029/result_qpca_endcf.json": {
+      "bytes": 14936,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "137bc7ac13e1cda487f3ee7893395fa1ff12eefb0d2899895b9c793b73abeaf0"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_seq_letkf_seed2027/result_qpca_endcf.json": {
+      "bytes": 11753,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "1a19bbe1ef5ee6c9ba11ff3ba4ad5e800f54395b096edf20e026568ef8a8ff8f"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_seq_letkf_seed2028/result_qpca_endcf.json": {
+      "bytes": 11674,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "2fde49ff8ca743fbdc0280bc62652dafc410d7bc63223261ae81fe0fd0d26966"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_cap60cmp_gh_seq_letkf_seed2029/result_qpca_endcf.json": {
+      "bytes": 11781,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "228ebac8c26582591e0ea65ae608b1523111bd57b01e8a60626fff6bde345bac"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_enkf4d_seed2027/result_qpca_endcf.json": {
+      "bytes": 22304,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "10743e298c89d7b7df05e6865544a19f47702eb8a3da7c65a3c0873312f25250"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_enkf4d_seed2028/result_qpca_endcf.json": {
+      "bytes": 22289,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "dfb7daa4afa79c6d51dd9bc0b0e46058e0c4f21f711698b4e0099e0d26e1b924"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_enkf4d_seed2029/result_qpca_endcf.json": {
+      "bytes": 22306,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "f44d7469d449c4be74f0ebfd8f8d70be2479381fd2023fd8ca6cd35fd3e38c38"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_letkf_seed2027/result_qpca_endcf.json": {
+      "bytes": 22002,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "581af0c981632a69ae87dc476f3c2e176429e6b0c2a8dee8ce5babbad72c9f60"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_letkf_seed2028/result_qpca_endcf.json": {
+      "bytes": 22013,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "48de51804ef085f7e78979d339dd94cf6381e126b341a2b6a8f37d41808f9eab"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_letkf_seed2029/result_qpca_endcf.json": {
+      "bytes": 22036,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "76057d8c644c048ffe5d549a5cb61a25a68ffd9e2ec2c09ffdf0f5dda24c35ae"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_qpca_seed2027/result_qpca_endcf.json": {
+      "bytes": 27045,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "109c11e61d42ee5cccb848fdb6c9e5472ea1db5dfb6ef5aaf557e90165100e92"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_qpca_seed2028/result_qpca_endcf.json": {
+      "bytes": 27037,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "e7b3fe1be8e88cfc06e2a84ff3e15fb8ba347e1afd19313a91f0c5e775d563ad"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_qpca_seed2029/result_qpca_endcf.json": {
+      "bytes": 27083,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "49e5b4cdee7f603482d31b02829ec17acedad34998438b6f415d7aefb121031e"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_seq_letkf_seed2027/result_qpca_endcf.json": {
+      "bytes": 20370,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "022c2ac61f75c6a3778e4bdaabe0d5b8be11bafe64403f9909a0d24ee1c12ae3"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_seq_letkf_seed2028/result_qpca_endcf.json": {
+      "bytes": 20853,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "27cc6992fbb7f7fcf55c2c891ec1e98d5bedcfec9223a76544d8e32f5273db67"
+    },
+    "shallow_water/runs/idealized_inlet_5filter_energy_metric_v1_sigmaE_capstone60_gh_seq_letkf_seed2029/result_qpca_endcf.json": {
+      "bytes": 20342,
+      "provenance": "Figures 6-8, Table 2. Per-window diagnostics of one shallow-water run, written on TACC Vista by the FEniCSx solver that produced the experiment (not part of this repository; the experiment is reproduced from these outputs). Each file records its run configuration under 'config'.",
+      "sha256": "18f2f28fddded51c38c662172924bb3d25e09dc1986942151df3c6a9dc5bb5c6"
+    },
+    "shallow_water/scale_matching_regime_map_v3.csv": {
+      "bytes": 9795,
+      "provenance": "Figures 6-8, Table 2. Built from shallow_water/runs/ by the scripts ported to src/processing/shallow_water.py (the original files, generated under Python 3.11; rebuilding under Python >= 3.12 changes some means in the last bit).",
+      "sha256": "fb5df34170b23e5d6eed4acc516bfa011fd21f6c1159054208867e93a9afc96d"
+    },
+    "shallow_water/scale_matching_trajectories_v3.csv": {
+      "bytes": 137527,
+      "provenance": "Figures 6-8, Table 2. Built from shallow_water/runs/ by the scripts ported to src/processing/shallow_water.py (the original files, generated under Python 3.11; rebuilding under Python >= 3.12 changes some means in the last bit).",
+      "sha256": "49d366f8983883a2b0f0061a6a8498b79abd0c951f37f9e6f5c8725c972826fb"
+    }
+  }
+}
