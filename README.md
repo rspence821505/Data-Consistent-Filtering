@@ -6,6 +6,8 @@ Code, numerical results and reproduction scripts for the paper
 > Rylan Spence¹, Troy Butler², Clint Dawson¹
 > ¹ Oden Institute for Computational Science and Engineering, University of Texas, Austin, TX
 > ² Department of Mathematical and Statistical Sciences, University of Colorado Denver, Denver, CO
+>
+> arXiv preprint [arXiv:2605.11282](https://arxiv.org/abs/2605.11282) [math.ST], 2026.
 
 Every figure of the paper can be regenerated from the numerical results stored
 here in about 15 seconds (**Level 1**). Every Lorenz-96 experiment can also be
@@ -20,7 +22,7 @@ only).
 * [Reproducibility](#reproducibility)
 * [Computational requirements](#computational-requirements)
 * [Data availability](#data-availability)
-* [Citation](#citation) · [License](#license) · [Acknowledgments](#acknowledgments)
+* [Citation](#citation) · [License](#license)
 
 ## Overview
 
@@ -57,8 +59,8 @@ The main contributions are:
   viable through the prescribed shelf-crossing endpoints in all four
   storm–localization configurations.
 
-No preprint or journal reference is available yet; this section will link to the
-paper once it is public.
+The paper is available on arXiv:
+[arXiv:2605.11282](https://arxiv.org/abs/2605.11282).
 
 ## Quick start
 
@@ -312,10 +314,15 @@ BLAS to one thread per worker.
 If you use this code, please cite the paper:
 
 ```bibtex
-@unpublished{spence_butler_dawson_data_consistent_filtering,
-  author = {Spence, Rylan and Butler, Troy and Dawson, Clint},
-  title  = {A Data-Consistent Approach to Ensemble Filtering},
-  note   = {Manuscript}
+@misc{spence_butler_dawson_data_consistent_filtering,
+  author        = {Spence, Rylan and Butler, Troy and Dawson, Clint},
+  title         = {A Data-Consistent Approach to Ensemble Filtering},
+  year          = {2026},
+  eprint        = {2605.11282},
+  archivePrefix = {arXiv},
+  primaryClass  = {math.ST},
+  doi           = {10.48550/arXiv.2605.11282},
+  url           = {https://arxiv.org/abs/2605.11282}
 }
 ```
 
@@ -325,13 +332,3 @@ published.
 ## License
 
 MIT License (`LICENSE`), © 2026 Rylan Spence.
-
-## Acknowledgments
-
-T. Butler's work is supported by the National Science Foundation under Grant
-No. DMS-2208460 and by the NSF IR/D program while working at the National
-Science Foundation. The work of C. Dawson and R. Spence is supported in part by
-the National Science Foundation under Grant No. DMS-2208461. Any opinions,
-findings, conclusions, or recommendations expressed in this material are those
-of the authors and do not necessarily reflect the views of the National Science
-Foundation.
